@@ -1,0 +1,42 @@
+#include <Adafruit_Fingerprint.h>
+#include <SoftwareSerial.h>
+
+SoftwareSerial mySerial(2, 3);
+Adafruit_Fingerprint finger = Adafruit_Fingerprint(&mySerial);
+
+void setup() {
+  Serial.begin(9600);
+  while (!Serial);
+  mySerial.begin(57600);
+  finger.begin(57600);
+  
+  if (finger.verifyPassword()) {
+    Serial.println("Found fingerprint sensor!");
+  } else {
+    Serial.println("Did not find fingerprint sensor :(");
+    while (1);
+  }
+}
+
+void loop() {
+  Serial.println("Place finger on sensor...");
+  while (finger.getImage() != FINGERPRINT_OK);
+  Serial.println("Image taken");
+
+  if (finger.image2Tz() != FINGERPRINT_OK) {
+    Serial.println("Error converting image");
+    return;
+  }
+  Serial.println("Image converted");
+
+  if (finger.createModel() != FINGERPRINT_OK) {
+    Serial.println("Error creating model");
+    return;
+  }
+  Serial.println("Prints matched!");
+
+  Serial.print("ID #");
+  Serial.println(finger.fingerID);
+  Serial.print(" with confidence of ");
+  Serial.println(finger.confidence);
+}

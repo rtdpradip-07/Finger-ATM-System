@@ -1,0 +1,18 @@
+import sqlite3
+
+# Connect to the database
+conn = sqlite3.connect('atm_system.db')
+c = conn.cursor()
+
+# Create table
+c.execute('''
+          CREATE TABLE IF NOT EXISTS users
+          (id INTEGER PRIMARY KEY,
+          name TEXT NOT NULL,
+          fingerprint BLOB NOT NULL,
+          balance REAL NOT NULL)
+          ''')
+
+# Commit and close
+conn.commit()
+conn.close()
